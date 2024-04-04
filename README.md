@@ -13,13 +13,13 @@ poetry install
 
 to drop yourself into this repo's virtual environment. Then, change directory to the `api` folder:
 
-```
+```bash
 cd api
 ```
 
 and run the service using Uvicorn:
 
-```
+```bash
 uvicorn main:app --reload
 ```
 
