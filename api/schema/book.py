@@ -4,15 +4,19 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class Genre(str, Enum):
+    scifi = "Science Fiction"
+    biography = "Biography"
+    fantasy = "Fantasy"
+    historical_fiction = "Historical Fiction"
+
+
 class BookBase(BaseModel):
     title: str
     author: str
+    genre: Optional[Genre]
     publication_year: Optional[int] = None
     rating: Optional[int] = None
-
-    # TODO
-    # Add a 'genre' field here. You'll need to add it in a few other places as well!
-    # Bonus: try implementing genre as an enum rather than a string
 
 
 class BookCreate(BookBase):
@@ -27,6 +31,7 @@ class Book(BookBase):
             id=id,
             title=base.title,
             author=base.author,
+            genre=base.genre,
             publication_year=base.publication_year,
             rating=base.rating,
         )

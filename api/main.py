@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, status
-from schema.book import Book, BookCreate
+from schema.book import Book, BookCreate, Genre
 
 app = FastAPI()
 
@@ -20,6 +20,7 @@ books.append(
         title="Shogun",
         author="James Clavell",
         publication_year=1975,
+        genre=Genre.historical_fiction,
         rating=10,
         id=get_next_book_id(),
     )
@@ -51,6 +52,17 @@ async def get_book(book_id: int) -> Book:
         )
     return ret
 
+@app.get(
+    "/books/byauthor/{author_last_name}"
+)
+async def get_books_by_author(author_last_name: str) -> list[Book]:
+    return (book for book in books if author_last_name in book.author)
+
+@app.get(
+    "/books/byyear/{publication_year}"
+)
+async def get_books_by_year(publication_year: int) -> list[Book]:
+    return (book for book in books if book.publication_year == publication_year)
 
 # TODO Add endpoint(s) for GET-ing books by author/publication year here
 # What should the endpoint(s) be named?
@@ -76,6 +88,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
     if book_to_update:
         book_to_update.title = book.title
         book_to_update.author = book.author
+        book_to_update.genre = book.genre
         book_to_update.publication_year = book.publication_year
         book_to_update.rating = book.rating
     else:
