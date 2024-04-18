@@ -16,11 +16,12 @@ def get_next_book_id() -> int:
 
 
 books.append(
-    Book.from_base(
-        BookCreate(
-            title="Shogun", author="James Clavell", publication_year=1975, rating=10
-        ),
-        get_next_book_id(),
+    Book(
+        title="Shogun",
+        author="James Clavell",
+        publication_year=1975,
+        rating=10,
+        id=get_next_book_id(),
     )
 )
 
