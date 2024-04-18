@@ -1,81 +1,63 @@
 from fastapi import FastAPI, HTTPException, status
-from schema.book import Book, BookCreate
+from schema.character import Character
+from schema.skills import Skill
 
 app = FastAPI()
 
-books: list[Book] = []
-
-book_id_counter = 0
-def get_next_book_id() -> int:
-    global book_id_counter
-    next_id = book_id_counter
-    book_id_counter += 1
-    return next_id
+characters: list[Character] = []
+characters.append(Character(name="Hiromatsu", family="Toda", skills=[Skill.sword, Skill.guile]))
+characters.append(Character(name="John", family="Blackthorne", skills=[Skill.cannon, Skill.vulgarity]))
 
 @app.get("/")
 async def root():
     return "The root endpoint of a service (/) is often used as a health check to determine whether the service is working or not."
 
 @app.get(
-    "/books",
-    response_model=list[Book],
+    "/characters",
+    response_model=list[Character],
 )
-async def get_books():
-    return books
+async def get_characters():
+    return characters
 
 @app.get(
-    "/books/{book_id}",
+    "/characters/{family}",
 )
-async def get_book(book_id: int) -> Book:
-    ret = next((book for book in books if book.id == book_id), None)
+async def get_characters_in_family(family: str) -> list[Character]:
+    ret = next((character for character in characters if character.family == family), None)
     if not ret:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Book with ID {book_id} does not exist"
+            detail=f"{family}'s dishonor has erased them from history."
         )
     return ret
 
-# TODO Add endpoint(s) for GET-ing books by author/publication year here
-# What should the endpoint(s) be named? 
-# Will it/they return one or potentially several books?
-# Can you safely handle the case where no books are returned? What HTTP status code would that be?
-
 @app.post(
-    "/books",
+    "/characters",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_book(book: BookCreate) -> Book:
-    new_book = Book.from_base(book, get_next_book_id())
-    books.append(new_book)
-    return new_book
+async def create_character(character: Character) -> Character:
+    characters.append(character)
+    return character
 
 @app.put(
-    "/books/{book_id}",
+    "/characters/{family}/{name}",
 )
-async def update_book(book: BookCreate, book_id: int) -> Book:
-    book_to_update = next((book for book in books if book.id == book_id), None)
-    if book_to_update:
-        book_to_update.title = book.title
-        book_to_update.author = book.author
-        book_to_update.publication_year = book.publication_year
-        book_to_update.rating = book.rating
+async def update_character(character: Character, family: str, name: str) -> Character:
+    character_to_update = next((character for character in characters if character.family == family and character.name == name), None)
+    if character_to_update:
+        character_to_update.family = character.family
+        character_to_update.name = character.name
+        character_to_update.skills = character.skills
     else:
-        book_to_update = Book.from_base(book, book_id)
-        books.append(book_to_update)
-    return book_to_update
+        character_to_update = character
+        characters.append(character_to_update)
+    return character_to_update
 
 @app.delete(
-    "/books/{book_id}",
+    "/characters/{family}/{name}",
 )
-async def delete_book(book_id: int) -> Book | None:
-    book_to_delete = next((book for book in books if book.id == book_id), None)
-    if book_to_delete:
-        books.remove(book_to_delete)
-    return book_to_delete
-
-@app.get("/coffee")
-async def brew():
-    raise HTTPException(
-        status_code=status.HTTP_418_IM_A_TEAPOT,
-        detail="Cannot brew coffee with a teapot!"
-    )
+async def delete_character(family: str, name: str) -> Character | None:
+    character_to_delete = next((character for character in characters if character.family == family and character.name == name), None)
+    if character_to_delete:
+        characters.remove(character_to_delete)
+    return character_to_delete
