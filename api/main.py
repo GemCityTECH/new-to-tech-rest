@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, HTTPException, status
+from fastapi import FastAPI, HTTPException, status
 from schema.book import Book, BookCreate
 
 app = FastAPI()
@@ -67,3 +67,10 @@ async def delete_book(book_id: int) -> Book | None:
     if book_to_delete:
         books.remove(book_to_delete)
     return book_to_delete
+
+@app.get("/coffee")
+async def brew():
+    raise HTTPException(
+        status_code=status.HTTP_418_IM_A_TEAPOT,
+        detail="Cannot brew coffee with a teapot!"
+    )
