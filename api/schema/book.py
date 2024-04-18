@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Optional
+from schema.review import Review
+from statistics import mean
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 
 class Genre(str, Enum):
@@ -16,7 +18,12 @@ class BookBase(BaseModel):
     author: str
     genre: Optional[Genre]
     publication_year: Optional[int] = None
-    rating: Optional[int] = None
+    reviews: list[Review] = []
+
+    @computed_field
+    @property
+    def average_rating(self) -> float:
+        return round(mean(review.rating for review in self.reviews), 2)
 
 
 class BookCreate(BookBase):
@@ -33,10 +40,5 @@ class Book(BookBase):
             author=base.author,
             genre=base.genre,
             publication_year=base.publication_year,
-            rating=base.rating,
+            reviews=base.reviews,
         )
-
-
-# TODO You may need to create new class(es) inheriting BaseModel in order to implement the 'multiple ratings' feature.
-# BaseModel is from Pydantic - see docs at https://docs.pydantic.dev/latest/concepts/models/
-# Think carefully about how to structure the classes and endpoints for this feature!
