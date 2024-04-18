@@ -56,6 +56,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
     book_to_update = next((book for book in books if book.id == book_id), None)
     if book_to_update:
         book_to_update.title = book.title
+        book_to_update.genre = book.genre
         book_to_update.author = book.author
         book_to_update.publication_year = book.publication_year
         book_to_update.rating = book.rating
