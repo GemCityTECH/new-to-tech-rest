@@ -7,6 +7,7 @@ class BookBase(BaseModel):
     author: str
     publication_year: Optional[int] = None
     rating: Optional[int] = None
+    genre: Optional[str] = None
 
     # TODO
     # Add a 'genre' field here. You'll need to add it in a few other places as well!
@@ -24,7 +25,8 @@ class Book(BookBase):
             title = base.title,
             author = base.author,
             publication_year = base.publication_year,
-            rating = base.rating
+            rating = base.rating,
+            genre = base.genre
         )
     
 
