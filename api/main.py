@@ -6,15 +6,29 @@ app = FastAPI()
 books: list[Book] = []
 
 book_id_counter = 0
+
+
 def get_next_book_id() -> int:
     global book_id_counter
     next_id = book_id_counter
     book_id_counter += 1
     return next_id
 
+
+books.append(
+    Book.from_base(
+        BookCreate(
+            title="Shogun", author="James Clavell", publication_year=1975, rating=10
+        ),
+        get_next_book_id(),
+    )
+)
+
+
 @app.get("/")
 async def root():
     return "The root endpoint of a service (/) is often used as a health check to determine whether the service is working or not."
+
 
 @app.get(
     "/books",
@@ -22,6 +36,7 @@ async def root():
 )
 async def get_books():
     return books
+
 
 @app.get(
     "/books/{book_id}",
@@ -31,14 +46,16 @@ async def get_book(book_id: int) -> Book:
     if not ret:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Book with ID {book_id} does not exist"
+            detail=f"Book with ID {book_id} does not exist",
         )
     return ret
 
+
 # TODO Add endpoint(s) for GET-ing books by author/publication year here
-# What should the endpoint(s) be named? 
+# What should the endpoint(s) be named?
 # Will it/they return one or potentially several books?
 # Can you safely handle the case where no books are returned? What HTTP status code would that be?
+
 
 @app.post(
     "/books",
@@ -48,6 +65,7 @@ async def create_book(book: BookCreate) -> Book:
     new_book = Book.from_base(book, get_next_book_id())
     books.append(new_book)
     return new_book
+
 
 @app.put(
     "/books/{book_id}",
@@ -64,6 +82,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
         books.append(book_to_update)
     return book_to_update
 
+
 @app.delete(
     "/books/{book_id}",
 )
@@ -73,9 +92,10 @@ async def delete_book(book_id: int) -> Book | None:
         books.remove(book_to_delete)
     return book_to_delete
 
+
 @app.get("/coffee")
 async def brew():
     raise HTTPException(
         status_code=status.HTTP_418_IM_A_TEAPOT,
-        detail="Cannot brew coffee with a teapot!"
+        detail="Cannot brew coffee with a teapot!",
     )
