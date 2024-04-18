@@ -35,6 +35,11 @@ async def get_book(book_id: int) -> Book:
         )
     return ret
 
+# TODO Add endpoint(s) for GET-ing books by author/publication year here
+# What should the endpoint(s) be named? 
+# Will it/they return one or potentially several books?
+# Can you safely handle the case where no books are returned? What HTTP status code would that be?
+
 @app.post(
     "/books",
     status_code=status.HTTP_201_CREATED,

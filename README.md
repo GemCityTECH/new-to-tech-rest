@@ -1,6 +1,8 @@
 # GCT-Rest
 
-A sample repository to support an upcoming New To Tech session
+A sample repository to support New To Tech sessions exploring REST for [Gem City Tech](https://gemcity.tech/).
+
+See the backing presentation [here](https://docs.google.com/presentation/d/1asBf1WpR5X9o_8XzorsQTUyAivOvhMxC3JTXE2SBeVA/edit?usp=sharing).
 
 ## How to run
 

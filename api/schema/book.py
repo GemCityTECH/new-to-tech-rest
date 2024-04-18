@@ -8,6 +8,10 @@ class BookBase(BaseModel):
     publication_year: Optional[int] = None
     rating: Optional[int] = None
 
+    # TODO
+    # Add a 'genre' field here. You'll need to add it in a few other places as well!
+    # Bonus: try implementing genre as an enum rather than a string
+
 class BookCreate(BookBase):
     pass
 
@@ -22,3 +26,8 @@ class Book(BookBase):
             publication_year = base.publication_year,
             rating = base.rating
         )
+    
+
+# TODO You may need to create new class(es) inheriting BaseModel in order to implement the 'multiple ratings' feature.
+# BaseModel is from Pydantic - see docs at https://docs.pydantic.dev/latest/concepts/models/
+# Think carefully about how to structure the classes and endpoints for this feature!
