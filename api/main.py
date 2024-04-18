@@ -79,3 +79,16 @@ async def brew():
         status_code=status.HTTP_418_IM_A_TEAPOT,
         detail="Cannot brew coffee with a teapot!"
     )
+
+@app.get("/search/author/")
+async def search_by_author(author: str):
+    return (book for book in books if author in book.author)
+
+@app.get("/search/pub_year/")
+async def search_by_pub_year(year: int):
+    return (book for book in books if book.publication_year == year)
+
+@app.get('/info/average_rating')
+async def get_average_rating():
+    ratings = [book.rating for book in books]
+    return sum(ratings) / len(ratings)
