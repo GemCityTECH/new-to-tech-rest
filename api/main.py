@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
-from schema.book import Book, BookCreate
+from schema.book import Book, BookCreate, Genre
+from schema.review import Review
 
 app = FastAPI()
 
@@ -17,11 +18,15 @@ def get_next_book_id() -> int:
 
 books.append(
     Book(
+        id=get_next_book_id(),
         title="Shogun",
         author="James Clavell",
         publication_year=1975,
-        rating=10,
-        id=get_next_book_id(),
+        genre=Genre.historical_fiction,
+        reviews=[
+            Review(submitter="Noah", rating=4),
+            Review(submitter="Asta", rating=5),
+        ],
     )
 )
 
@@ -52,6 +57,16 @@ async def get_book(book_id: int) -> Book:
     return ret
 
 
+@app.get("/books/byauthor/{author_last_name}")
+async def get_books_by_author(author_last_name: str) -> list[Book]:
+    return (book for book in books if author_last_name in book.author)
+
+
+@app.get("/books/byyear/{publication_year}")
+async def get_books_by_year(publication_year: int) -> list[Book]:
+    return (book for book in books if book.publication_year == publication_year)
+
+
 # TODO Add endpoint(s) for GET-ing books by author/publication year here
 # What should the endpoint(s) be named?
 # Will it/they return one or potentially several books?
@@ -68,6 +83,42 @@ async def create_book(book: BookCreate) -> Book:
     return new_book
 
 
+# TODO make "find book by ID or raise exception" logic reusable
+# TODO enforce review submitter name uniqueness
+@app.post(
+    "/books/review/{book_id}",
+    status_code=status.HTTP_201_CREATED,
+)
+async def review_book(book_id: int, review: Review) -> Book:
+    book_to_review = next((book for book in books if book.id == book_id), None)
+    if not book_to_review:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Book with ID {book_id} does not exist",
+        )
+    book_to_review.reviews.append(review)
+    return book_to_review
+
+
+# TODO raise exception when review by submitter does not exist
+# TODO raise separate exception if no reviews exist
+@app.delete("/books/review/{book_id}/{submitter}")
+async def delete_review(book_id: int, submitter: str) -> Review:
+    book_to_review = next((book for book in books if book.id == book_id), None)
+    if not book_to_review:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Book with ID {book_id} does not exist",
+        )
+    review_to_delete = next(
+        (review for review in book_to_review.reviews if review.submitter == submitter),
+        None,
+    )
+    if review_to_delete:
+        book_to_review.reviews.remove(review_to_delete)
+    return review_to_delete
+
+
 @app.put(
     "/books/{book_id}",
 )
@@ -76,8 +127,9 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
     if book_to_update:
         book_to_update.title = book.title
         book_to_update.author = book.author
+        book_to_update.genre = book.genre
         book_to_update.publication_year = book.publication_year
-        book_to_update.rating = book.rating
+        book_to_update.reviews = book.reviews
     else:
         book_to_update = Book.from_base(book, book_id)
         books.append(book_to_update)
