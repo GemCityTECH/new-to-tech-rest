@@ -1,6 +1,7 @@
 from typing import Optional
-
 from pydantic import BaseModel
+from schema.review import Rating
+import statistics
 
 class BookBase(BaseModel):
     title: str
@@ -9,8 +10,8 @@ class BookBase(BaseModel):
     publication_year: Optional[int] = None
     #rating: Optional[int] = None
 
-    def avg_rating(sum_of_ratings): -> float:
-        return 
+    def avg_rating(sum_of_ratings) -> float:
+        return statistics.mean(sum_of_ratings)
 
     # TODO
     # Add a 'genre' field here. You'll need to add it in a few other places as well!
