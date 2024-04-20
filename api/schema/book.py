@@ -7,7 +7,10 @@ class BookBase(BaseModel):
     author: str
     genre: str
     publication_year: Optional[int] = None
-    rating: Optional[int] = None
+    #rating: Optional[int] = None
+
+    def avg_rating(sum_of_ratings): -> float:
+        return 
 
     # TODO
     # Add a 'genre' field here. You'll need to add it in a few other places as well!

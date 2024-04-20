@@ -16,7 +16,7 @@ books.append(
     Book(
         title="Green Eggs and Ham",
         author="Dr.Suess",
-        publication_year="1980",
+        publication_year=1980,
         genre="Self-help",
         rating=10,
         id=get_next_book_id()
@@ -50,11 +50,14 @@ async def get_book(book_id: int) -> Book:
 # What should the endpoint(s) be named? 
 # Will it/they return one or potentially several books?
 # Can you safely handle the case where no books are returned? What HTTP status code would that be?
-@app.get(
-    "/books/author/{author_last_name}",
-)
-async def get_book(author_last_name: str) -> Book:
-    return (Book for book in books if author_last_name in book.author)
+
+@app.get("/books/author/{author_last_name}")
+async def get_book_author(author_last_name: str) -> list[Book]:
+    return (book for book in books if author_last_name in book.author)
+
+@app.get("/books/publication_year/{publication_year}")
+async def get_book_publication_year(publication_year: int) -> list[Book]:
+    return (book for book in books if publication_year == book.publication_year)
 
 @app.post(
     "/books",
