@@ -1,5 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel
 
-class review(BaseModel):
+class Review(BaseModel):
     review: str

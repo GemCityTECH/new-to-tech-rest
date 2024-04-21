@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from schema.review import Rating
+from .rating import Rating
 import statistics
 
 class BookBase(BaseModel):
