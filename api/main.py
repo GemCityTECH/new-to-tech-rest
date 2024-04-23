@@ -19,7 +19,8 @@ books.append(
         publication_year=1980,
         genre="Self-help",
         rating=10,
-        id=get_next_book_id()
+        id=get_next_book_id(),
+        review="Life changing. Inspiring. A true master piece on addition in the modern era."
     )
 )
 
@@ -35,7 +36,7 @@ async def get_books():
     return books
 
 @app.get(
-    "/books/{book_id}",
+"/books/{book_id}",
 )
 async def get_book(book_id: int) -> Book:
     ret = next((book for book in books if book.id == book_id), None)
@@ -50,6 +51,10 @@ async def get_book(book_id: int) -> Book:
 # What should the endpoint(s) be named? 
 # Will it/they return one or potentially several books?
 # Can you safely handle the case where no books are returned? What HTTP status code would that be?
+
+# @app.get("/books/bookreviews/{book_reviews}")
+# async def get_book_reviews(book_reviws: str) -> list[Book]:
+#     return(book_review for book in books if )
 
 @app.get("/books/author/{author_last_name}")
 async def get_book_author(author_last_name: str) -> list[Book]:
@@ -68,6 +73,13 @@ async def create_book(book: BookCreate) -> Book:
     books.append(new_book)
     return new_book
 
+@app.put("/books/bookreview/{book_review}",)
+async def post_book_reviews(book: BookCreate, book_title: str, book_review: str) -> Book:
+    book_to_update = next((book for book in books if book_title == book.title), None)
+    if book_title in book.title:
+        book.review.append(book_review)
+
+
 @app.put(
     "/books/{book_id}",
 )
@@ -79,6 +91,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
         book_to_update.author = book.author
         book_to_update.publication_year = book.publication_year
         book_to_update.rating = book.rating
+        book_to_update.review = book.review
     else:
         book_to_update = Book.from_base(book, book_id)
         books.append(book_to_update)

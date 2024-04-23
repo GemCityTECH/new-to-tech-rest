@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
-from .rating import Rating
+from .review import Review
 import statistics
 
 class BookBase(BaseModel):
@@ -8,11 +8,14 @@ class BookBase(BaseModel):
     author: str
     genre: str
     publication_year: Optional[int] = None
-    #rating: Optional[int] = None
+    review: List[Review] = []
 
-    def avg_rating(sum_of_ratings) -> float:
-        return statistics.mean(sum_of_ratings)
-
+    def avg_rating(self) -> float:
+        ratings = [review.rating for review in self.reviews if review.rating is not None]
+        if not ratings:
+            return 0.0
+        return statistics.mean(ratings)
+    
     # TODO
     # Add a 'genre' field here. You'll need to add it in a few other places as well!
     # Bonus: try implementing genre as an enum rather than a string
@@ -30,7 +33,7 @@ class Book(BookBase):
             genre = base.genre,
             author = base.author,
             publication_year = base.publication_year,
-            rating = base.rating
+            reviews = base.reviews
         )
     
 

@@ -1,5 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 
 class Review(BaseModel):
-    review: str
+    reviewer: Optional[str] = None
+    review: Optional[str] = None
+    rating: Optional[conint(ge=0, le=5)] = None
