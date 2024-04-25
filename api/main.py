@@ -92,7 +92,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
         book_to_update.author = book.author
         book_to_update.publication_year = book.publication_year
         book_to_update.rating = book.review.rating
-        book_to_update.review = book.review
+        book_to_update.reviews = book.reviews
     else:
         book_to_update = Book.from_base(book, book_id)
         books.append(book_to_update)

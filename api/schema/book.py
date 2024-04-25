@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 from .review import Review
 import statistics
 
@@ -10,11 +10,14 @@ class BookBase(BaseModel):
     publication_year: Optional[int] = None
     reviews: List[Review] = []
 
+    @computed_field
+    @property
     def avg_rating(self) -> float:
         ratings = [review.rating for review in self.reviews if review.rating is not None]
         if not ratings:
             return 0.0
-        return statistics.mean(ratings)
+        else:
+            return statistics.mean(ratings)
     
     # TODO
     # Add a 'genre' field here. You'll need to add it in a few other places as well!
@@ -33,7 +36,7 @@ class Book(BookBase):
             genre = base.genre,
             author = base.author,
             publication_year = base.publication_year,
-            reviews = base.reviews
+            reviews = base.reviews,
         )
     
 
