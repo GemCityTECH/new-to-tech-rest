@@ -8,7 +8,7 @@ class BookBase(BaseModel):
     author: str
     genre: str
     publication_year: Optional[int] = None
-    review: List[Review] = []
+    reviews: List[Review] = []
 
     def avg_rating(self) -> float:
         ratings = [review.rating for review in self.reviews if review.rating is not None]

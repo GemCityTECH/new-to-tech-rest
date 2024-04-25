@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
 from schema.book import Book, BookCreate
+from schema.review import Review, ReviewCreate
 
 app = FastAPI()
 
@@ -14,13 +15,13 @@ def get_next_book_id() -> int:
 
 books.append(
     Book(
+        id=get_next_book_id(),
         title="Green Eggs and Ham",
         author="Dr.Suess",
         publication_year=1980,
         genre="Self-help",
-        rating=10,
-        id=get_next_book_id(),
-        review="Life changing. Inspiring. A true master piece on addition in the modern era."
+        reviews=[Review(id=1,reviewer="LeBron James", review="Life changing. A true masterpiece.", rating=5),
+                 Review(id=2,reviewer="LeBron James", review="Read it again. Mid.", rating=3)],
     )
 )
 
@@ -73,11 +74,11 @@ async def create_book(book: BookCreate) -> Book:
     books.append(new_book)
     return new_book
 
-@app.put("/books/bookreview/{book_review}",)
-async def post_book_reviews(book: BookCreate, book_title: str, book_review: str) -> Book:
-    book_to_update = next((book for book in books if book_title == book.title), None)
-    if book_title in book.title:
-        book.review.append(book_review)
+# @app.put("/books/bookreview/{book_review}",)
+# async def post_book_reviews(book_title:BookBase,_review: ReviewCreate) -> Review:
+#     book_to_update = next((book for book in books if book_title == book.title), None)
+#     if book_title in book.title:
+#         book.review.append(book_review)
 
 
 @app.put(
@@ -90,7 +91,7 @@ async def update_book(book: BookCreate, book_id: int) -> Book:
         book_to_update.genre = book.genre
         book_to_update.author = book.author
         book_to_update.publication_year = book.publication_year
-        book_to_update.rating = book.rating
+        book_to_update.rating = book.review.rating
         book_to_update.review = book.review
     else:
         book_to_update = Book.from_base(book, book_id)
